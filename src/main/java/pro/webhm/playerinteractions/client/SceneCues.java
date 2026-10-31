@@ -147,7 +147,7 @@ public final class SceneCues {
       }
 
       public WeighedSoundEvents resolve(SoundManager manager) {
-         this.sound = new Sound(this.location, ConstantFloat.of(1.0F), ConstantFloat.of(1.0F), 1, Type.FILE, true, false, 16);
+         this.sound = new Sound(this.location.toString(), ConstantFloat.of(1.0F), ConstantFloat.of(1.0F), 1, Type.FILE, true, false, 16);
          WeighedSoundEvents events = new WeighedSoundEvents(this.location, null);
          events.addSound(this.sound);
          return events;

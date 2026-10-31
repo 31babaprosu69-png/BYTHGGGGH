@@ -24,7 +24,7 @@ public final class TogetherClient {
       if (Actions.together(s.action)) {
          Minecraft mc = Minecraft.getInstance();
          if (mc.level != null) {
-            double now = (double)((float)mc.level.getGameTime() + mc.getTimer().getGameTimeDeltaPartialTick(true));
+            double now = (double)((float)mc.level.getGameTime() + mc.getFrameTime());
             SessionState.Actor a = s.recipient();
             TogetherClient.Frame f = FRAMES.get(s.id);
             if (f == null) {

@@ -90,7 +90,7 @@ public final class SceneTouchSurface {
             this.model.prepare(npc, pose, partial, true);
             SurfaceSnapshot.Alpha alpha = (u, v) -> true;
             this.mesh.reset(alpha);
-            this.model.renderToBuffer(this.stack, this.mesh, 0, 0, -1);
+            this.model.renderToBufferArgb(this.stack, this.mesh, 0, 0, -1);
             this.model.protectStrokeJoints(dent);
             this.captureVolumes(alpha);
          }

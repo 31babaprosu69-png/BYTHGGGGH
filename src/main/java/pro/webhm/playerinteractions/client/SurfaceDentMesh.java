@@ -35,7 +35,10 @@ public final class SurfaceDentMesh implements VertexConsumer {
       }
    }
 
-   public VertexConsumer addVertex(float x, float y, float z) {
+   public VertexConsumer vertex(double x0, double y0, double z0) {
+      float x = (float)x0;
+      float y = (float)y0;
+      float z = (float)z0;
       float[] d = this.data[this.count];
       d[0] = x;
       d[1] = y;
@@ -43,7 +46,7 @@ public final class SurfaceDentMesh implements VertexConsumer {
       return this;
    }
 
-   public VertexConsumer setColor(int r, int g, int b, int a) {
+   public VertexConsumer color(int r, int g, int b, int a) {
       float[] d = this.data[this.count];
       d[3] = (float)r;
       d[4] = (float)g;
@@ -52,25 +55,25 @@ public final class SurfaceDentMesh implements VertexConsumer {
       return this;
    }
 
-   public VertexConsumer setUv(float u, float v) {
+   public VertexConsumer uv(float u, float v) {
       this.data[this.count][7] = u;
       this.data[this.count][8] = v;
       return this;
    }
 
-   public VertexConsumer setUv1(int u, int v) {
+   public VertexConsumer overlayCoords(int u, int v) {
       this.data[this.count][9] = (float)u;
       this.data[this.count][10] = (float)v;
       return this;
    }
 
-   public VertexConsumer setUv2(int u, int v) {
+   public VertexConsumer uv2(int u, int v) {
       this.data[this.count][11] = (float)u;
       this.data[this.count][12] = (float)v;
       return this;
    }
 
-   public VertexConsumer setNormal(float x, float y, float z) {
+   public VertexConsumer normal(float x, float y, float z) {
       float[] d = this.data[this.count];
       d[13] = x;
       d[14] = y;
@@ -85,12 +88,12 @@ public final class SurfaceDentMesh implements VertexConsumer {
 
    private void raw(float[] d) {
       this.out
-         .addVertex(d[0], d[1], d[2])
-         .setColor((int)d[3], (int)d[4], (int)d[5], (int)d[6])
-         .setUv(d[7], d[8])
-         .setUv1((int)d[9], (int)d[10])
-         .setUv2((int)d[11], (int)d[12])
-         .setNormal(d[13], d[14], d[15]);
+         .vertex(d[0], d[1], d[2])
+         .color((int)d[3], (int)d[4], (int)d[5], (int)d[6])
+         .uv(d[7], d[8])
+         .overlayCoords((int)d[9], (int)d[10])
+         .uv2((int)d[11], (int)d[12])
+         .normal(d[13], d[14], d[15]).endVertex();
    }
 
    private void quad() {
@@ -165,11 +168,20 @@ public final class SurfaceDentMesh implements VertexConsumer {
       this.dent.displace(this.at.x, this.at.y, this.at.z, this.at);
       this.matrix.transformPosition(this.at);
       this.out
-         .addVertex(this.at.x, this.at.y, this.at.z)
-         .setColor(Math.round(this.blend(3, u, v)), Math.round(this.blend(4, u, v)), Math.round(this.blend(5, u, v)), Math.round(this.blend(6, u, v)))
-         .setUv(this.blend(7, u, v), this.blend(8, u, v))
-         .setUv1(Math.round(this.blend(9, u, v)), Math.round(this.blend(10, u, v)))
-         .setUv2(Math.round(this.blend(11, u, v)), Math.round(this.blend(12, u, v)))
-         .setNormal(this.normal.x, this.normal.y, this.normal.z);
+         .vertex(this.at.x, this.at.y, this.at.z)
+         .color(Math.round(this.blend(3, u, v)), Math.round(this.blend(4, u, v)), Math.round(this.blend(5, u, v)), Math.round(this.blend(6, u, v)))
+         .uv(this.blend(7, u, v), this.blend(8, u, v))
+         .overlayCoords(Math.round(this.blend(9, u, v)), Math.round(this.blend(10, u, v)))
+         .uv2(Math.round(this.blend(11, u, v)), Math.round(this.blend(12, u, v)))
+         .normal(this.normal.x, this.normal.y, this.normal.z).endVertex();
+   }
+
+   public void endVertex() {
+   }
+
+   public void defaultColor(int r, int g, int b, int a) {
+   }
+
+   public void unsetDefaultColor() {
    }
 }

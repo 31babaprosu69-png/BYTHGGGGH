@@ -40,7 +40,10 @@ public final class SurfaceSnapshot implements VertexConsumer {
       }
    }
 
-   public VertexConsumer addVertex(float x, float y, float z) {
+   public VertexConsumer vertex(double x0, double y0, double z0) {
+      float x = (float)x0;
+      float y = (float)y0;
+      float z = (float)z0;
       this.capacityForVertex();
       int i = this.count * 8;
       this.vertices[i] = x;
@@ -49,25 +52,25 @@ public final class SurfaceSnapshot implements VertexConsumer {
       return this;
    }
 
-   public VertexConsumer setColor(int r, int g, int b, int a) {
+   public VertexConsumer color(int r, int g, int b, int a) {
       return this;
    }
 
-   public VertexConsumer setUv(float u, float v) {
+   public VertexConsumer uv(float u, float v) {
       this.vertices[this.count * 8 + 6] = u;
       this.vertices[this.count * 8 + 7] = v;
       return this;
    }
 
-   public VertexConsumer setUv1(int u, int v) {
+   public VertexConsumer overlayCoords(int u, int v) {
       return this;
    }
 
-   public VertexConsumer setUv2(int u, int v) {
+   public VertexConsumer uv2(int u, int v) {
       return this;
    }
 
-   public VertexConsumer setNormal(float x, float y, float z) {
+   public VertexConsumer normal(float x, float y, float z) {
       int i = this.count * 8;
       this.vertices[i + 3] = x;
       this.vertices[i + 4] = y;
@@ -212,5 +215,14 @@ public final class SurfaceSnapshot implements VertexConsumer {
    @FunctionalInterface
    public interface HitFilter {
       boolean accept(float var1, float var2, float var3, float var4, float var5, float var6);
+   }
+
+   public void endVertex() {
+   }
+
+   public void defaultColor(int r, int g, int b, int a) {
+   }
+
+   public void unsetDefaultColor() {
    }
 }

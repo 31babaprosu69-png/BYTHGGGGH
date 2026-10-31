@@ -15,7 +15,7 @@ public abstract class PairPushMixin {
       cancellable = true
    )
    private void aotplayers$pairPush(Entity other, CallbackInfo ci) {
-      if (PairCollision.suppress((Entity)this, other)) {
+      if (PairCollision.suppress((Entity)(Object)this, other)) {
          ci.cancel();
       }
    }

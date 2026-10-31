@@ -35,8 +35,8 @@ public final class AvatarRig extends SharedBodyModel<AbstractClientPlayer> {
    }
 
    @Override
-   public void renderToBuffer(PoseStack stack, VertexConsumer out, int light, int overlay, int color) {
-      super.renderToBuffer(stack, this.strokeBuffer(stack, out), light, overlay, color);
+   public void renderToBufferArgb(PoseStack stack, VertexConsumer out, int light, int overlay, int color) {
+      super.renderToBufferArgb(stack, this.strokeBuffer(stack, out), light, overlay, color);
    }
 
    public void setupAnim(AbstractClientPlayer entity, float limb, float amount, float age, float yaw, float pitch) {

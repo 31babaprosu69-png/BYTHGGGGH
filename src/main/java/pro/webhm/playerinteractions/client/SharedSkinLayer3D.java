@@ -1,5 +1,6 @@
 package pro.webhm.playerinteractions.client;
 
+import pro.webhm.playerinteractions.compat.Vtx;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
@@ -93,12 +94,12 @@ public final class SharedSkinLayer3D {
       int rowPixels = rowCount * scale;
       int rowStartPixels = rowStart * scale;
       SharedSkinLayer3D.Normals normals = new SharedSkinLayer3D.Normals(
-         pose.transformNormal(1.0F, 0.0F, 0.0F, new Vector3f()),
-         pose.transformNormal(-1.0F, 0.0F, 0.0F, new Vector3f()),
-         pose.transformNormal(0.0F, 1.0F, 0.0F, new Vector3f()),
-         pose.transformNormal(0.0F, -1.0F, 0.0F, new Vector3f()),
-         pose.transformNormal(0.0F, 0.0F, 1.0F, new Vector3f()),
-         pose.transformNormal(0.0F, 0.0F, -1.0F, new Vector3f())
+         pose.normal().transform(1.0F, 0.0F, 0.0F, new Vector3f()),
+         pose.normal().transform(-1.0F, 0.0F, 0.0F, new Vector3f()),
+         pose.normal().transform(0.0F, 1.0F, 0.0F, new Vector3f()),
+         pose.normal().transform(0.0F, -1.0F, 0.0F, new Vector3f()),
+         pose.normal().transform(0.0F, 0.0F, 1.0F, new Vector3f()),
+         pose.normal().transform(0.0F, 0.0F, -1.0F, new Vector3f())
       );
 
       for (int u = 0; u < widthPixels; u++) {
@@ -321,7 +322,7 @@ public final class SharedSkinLayer3D {
       float px = matrix.m00() * sx + matrix.m10() * sy + matrix.m20() * sz + matrix.m30();
       float py = matrix.m01() * sx + matrix.m11() * sy + matrix.m21() * sz + matrix.m31();
       float pz = matrix.m02() * sx + matrix.m12() * sy + matrix.m22() * sz + matrix.m32();
-      out.addVertex(px, py, pz, -1, u / 64.0F, v / 64.0F, OverlayTexture.NO_OVERLAY, light, normal.x(), normal.y(), normal.z());
+      Vtx.vertex(out, px, py, pz, -1, u / 64.0F, v / 64.0F, OverlayTexture.NO_OVERLAY, light, normal.x(), normal.y(), normal.z());
    }
 
    private static record Normals(Vector3f positiveX, Vector3f negativeX, Vector3f positiveY, Vector3f negativeY, Vector3f positiveZ, Vector3f negativeZ) {

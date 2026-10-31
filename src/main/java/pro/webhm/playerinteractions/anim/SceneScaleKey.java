@@ -45,8 +45,8 @@ public final class SceneScaleKey {
 
    public static float sample(List<SceneScaleKey> keys, float base, double time) {
       base = clamp(base);
-      if (keys != null && !keys.isEmpty() && Double.isFinite(time) && !(time < (double)keys.getFirst().tick)) {
-         SceneScaleKey left = keys.getFirst();
+      if (keys != null && !keys.isEmpty() && Double.isFinite(time) && !(time < (double)keys.get(0).tick)) {
+         SceneScaleKey left = keys.get(0);
 
          for (int i = 1; i < keys.size(); i++) {
             SceneScaleKey right = keys.get(i);

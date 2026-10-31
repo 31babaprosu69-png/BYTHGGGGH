@@ -245,7 +245,7 @@ public final class SessionState {
    }
 
    public SessionState.Actor initiator() {
-      return this.actors.getFirst();
+      return this.actors.get(0);
    }
 
    public SessionState.Actor recipient() {

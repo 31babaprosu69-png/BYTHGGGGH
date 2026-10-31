@@ -1,5 +1,6 @@
 package pro.webhm.playerinteractions.client;
 
+import pro.webhm.playerinteractions.compat.Vtx;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
@@ -660,13 +661,13 @@ public final class SharedHeadRig {
 
    private static void vertex(VertexConsumer b, Pose pose, int light, float x, float y, float z, float u, float v, float nx, float ny, float nz, int color) {
       Matrix4f m = pose.pose();
-      Vector3f normal = pose.transformNormal(nx, ny, nz, new Vector3f());
+      Vector3f normal = pose.normal().transform(nx, ny, nz, new Vector3f());
       float sx = x / 16.0F;
       float sy = y / 16.0F;
       float sz = z / 16.0F;
       float px = m.m00() * sx + m.m10() * sy + m.m20() * sz + m.m30();
       float py = m.m01() * sx + m.m11() * sy + m.m21() * sz + m.m31();
       float pz = m.m02() * sx + m.m12() * sy + m.m22() * sz + m.m32();
-      b.addVertex(px, py, pz, color, u / 64.0F, v / 64.0F, OverlayTexture.NO_OVERLAY, light, normal.x(), normal.y(), normal.z());
+      Vtx.vertex(b, px, py, pz, color, u / 64.0F, v / 64.0F, OverlayTexture.NO_OVERLAY, light, normal.x(), normal.y(), normal.z());
    }
 }

@@ -16,7 +16,7 @@ public abstract class PlayerTravelMixin {
       cancellable = true
    )
    private void aotplayers$travel(Vec3 movement, CallbackInfo ci) {
-      Player player = (Player)this;
+      Player player = (Player)(Object)this;
       if (!player.level().isClientSide && InteractionServer.locked(player.getUUID())) {
          player.setDeltaMovement(Vec3.ZERO);
          ci.cancel();

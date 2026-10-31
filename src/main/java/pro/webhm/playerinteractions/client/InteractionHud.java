@@ -39,7 +39,7 @@ final class InteractionHud {
             }
 
             boolean initiator = s.initiator().id.equals(mc.player.getUUID());
-            int bottom = bottom(height, scale, mc.gui.leftHeight, mc.gui.rightHeight);
+            int bottom = bottom(height, scale, leftHeight(mc), rightHeight(mc));
             if (s.action == 4) {
                TouchZones.Hit hit = InteractionClient.touchHit();
                int zone = s.touching ? s.zone : (hit == null ? -1 : hit.zone());
@@ -91,6 +91,14 @@ final class InteractionHud {
             g.pose().popPose();
          }
       }
+   }
+
+   private static int leftHeight(Minecraft mc) {
+      return mc.gui instanceof net.minecraftforge.client.gui.overlay.ForgeGui g ? g.leftHeight : 39;
+   }
+
+   private static int rightHeight(Minecraft mc) {
+      return mc.gui instanceof net.minecraftforge.client.gui.overlay.ForgeGui g ? g.rightHeight : 39;
    }
 
    static int bottom(int height, float scale, int leftHeight, int rightHeight) {

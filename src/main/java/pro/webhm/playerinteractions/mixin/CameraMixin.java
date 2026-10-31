@@ -21,7 +21,7 @@ public abstract class CameraMixin {
       at = {@At("TAIL")}
    )
    private void aotplayers$placeSceneCamera(BlockGetter level, Entity entity, boolean detached, boolean mirrored, float partialTick, CallbackInfo ci) {
-      Vec3 position = SceneCameraBridge.position((Camera)this, partialTick);
+      Vec3 position = SceneCameraBridge.position((Camera)(Object)this, partialTick);
       if (position != null) {
          this.setPosition(position);
       }

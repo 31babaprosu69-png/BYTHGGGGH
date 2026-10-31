@@ -1,5 +1,6 @@
 package pro.webhm.playerinteractions.client;
 
+import pro.webhm.playerinteractions.compat.Vtx;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
@@ -805,7 +806,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
             head.xScale *= 1.0015F;
             head.yScale *= 1.0015F;
             head.zScale *= 1.0015F;
-            this.root.render(poseStack, buffer, light, overlay, -1);
+            Vtx.render(this.root, poseStack, buffer, light, overlay, -1);
          } finally {
             head.xScale = sx;
             head.yScale = sy;
@@ -817,7 +818,11 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
       }
    }
 
-   public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int light, int overlay, int color) {
+   public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int light, int overlay, float r, float g, float b, float a) {
+      this.renderToBufferArgb(poseStack, buffer, light, overlay, Vtx.argb(r, g, b, a));
+   }
+
+   public void renderToBufferArgb(PoseStack poseStack, VertexConsumer buffer, int light, int overlay, int color) {
       this.withPreviewVisibility(() -> this.renderVisibleBody(poseStack, buffer, light, overlay, color));
    }
 
@@ -912,7 +917,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
          if (this.continuousLimbs) {
             this.renderContinuousRig(poseStack, buffer, light, overlay, color);
          } else {
-            this.root.render(poseStack, buffer, light, overlay, color);
+            Vtx.render(this.root, poseStack, buffer, light, overlay, color);
          }
       } finally {
          this.bodyBase.skipDraw = oldBody;
@@ -925,7 +930,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
          if (this.root.visible && this.bonePart(bone).visible && !this.bonePart(bone).skipDraw) {
             poseStack.pushPose();
             this.translateToBone(bone, poseStack);
-            part.render(poseStack, this.dentBuffer(poseStack, buffer, bone.id), light, overlay, color);
+            Vtx.render(part, poseStack, this.dentBuffer(poseStack, buffer, bone.id), light, overlay, color);
             poseStack.popPose();
          }
       }
@@ -1027,7 +1032,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
 
       try {
          var16 = true;
-         this.root.render(stack, out, light, overlay, color);
+         Vtx.render(this.root, stack, out, light, overlay, color);
          var16 = false;
       } finally {
          if (var16) {
@@ -1528,7 +1533,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
       int overlay,
       int light
    ) {
-      Vector3f n = p.transformNormal(0.0F, 0.0F, -1.0F, new Vector3f());
+      Vector3f n = p.normal().transform(0.0F, 0.0F, -1.0F, new Vector3f());
       float density = 4.0F / referenceHalf;
       breastEdgeVertex(b, p.pose(), xt1, y0, z, 24.0F + xt1 * density, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), xt0, y0, z, 24.0F + xt0 * density, v0, color, overlay, light, n);
@@ -1555,7 +1560,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
       int overlay,
       int light
    ) {
-      Vector3f n = p.transformNormal(0.0F, 0.0F, 1.0F, new Vector3f());
+      Vector3f n = p.normal().transform(0.0F, 0.0F, 1.0F, new Vector3f());
       float density = 4.0F / referenceHalf;
       breastEdgeVertex(b, p.pose(), xt0, y0, z, 36.0F + xt0 * density, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), xt1, y0, z, 36.0F + xt1 * density, v0, color, overlay, light, n);
@@ -1581,7 +1586,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
       int light
    ) {
       Vector3f local = new Vector3f(-(y1 - y0), xb - xt, 0.0F).normalize();
-      Vector3f n = p.transformNormal(local.x(), local.y(), 0.0F, new Vector3f());
+      Vector3f n = p.normal().transform(local.x(), local.y(), 0.0F, new Vector3f());
       breastEdgeVertex(b, p.pose(), xt, y0, z0, u0, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), xt, y0, z1, u1, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), xb, y1, z1, u1, v1, color, overlay, light, n);
@@ -1606,7 +1611,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
       int light
    ) {
       Vector3f local = new Vector3f(y1 - y0, -(xb - xt), 0.0F).normalize();
-      Vector3f n = p.transformNormal(local.x(), local.y(), 0.0F, new Vector3f());
+      Vector3f n = p.normal().transform(local.x(), local.y(), 0.0F, new Vector3f());
       breastEdgeVertex(b, p.pose(), xt, y0, z1, u1, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), xt, y0, z0, u0, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), xb, y1, z0, u0, v1, color, overlay, light, n);
@@ -1993,7 +1998,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
    protected static void breastFront(
       VertexConsumer b, Pose p, float x0, float x1, float y0, float y1, float z, float u0, float v0, float u1, float v1, int color, int overlay, int light
    ) {
-      Vector3f n = p.transformNormal(0.0F, 0.0F, -1.0F, new Vector3f());
+      Vector3f n = p.normal().transform(0.0F, 0.0F, -1.0F, new Vector3f());
       breastEdgeVertex(b, p.pose(), x1, y0, z, u1, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x0, y0, z, u0, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x0, y1, z, u0, v1, color, overlay, light, n);
@@ -2003,7 +2008,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
    protected static void breastBack(
       VertexConsumer b, Pose p, float x0, float x1, float y0, float y1, float z, float u0, float v0, float u1, float v1, int color, int overlay, int light
    ) {
-      Vector3f n = p.transformNormal(0.0F, 0.0F, 1.0F, new Vector3f());
+      Vector3f n = p.normal().transform(0.0F, 0.0F, 1.0F, new Vector3f());
       breastEdgeVertex(b, p.pose(), x0, y0, z, u0, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x1, y0, z, u1, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x1, y1, z, u1, v1, color, overlay, light, n);
@@ -2013,7 +2018,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
    protected static void breastBottom(
       VertexConsumer b, Pose p, float x0, float x1, float y, float z0, float z1, float u0, float v0, float u1, float v1, int color, int overlay, int light
    ) {
-      Vector3f n = p.transformNormal(0.0F, 1.0F, 0.0F, new Vector3f());
+      Vector3f n = p.normal().transform(0.0F, 1.0F, 0.0F, new Vector3f());
       breastEdgeVertex(b, p.pose(), x0, y, z0, u0, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x1, y, z0, u1, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x1, y, z1, u1, v1, color, overlay, light, n);
@@ -2023,7 +2028,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
    protected static void breastTop(
       VertexConsumer b, Pose p, float x0, float x1, float y, float z0, float z1, float u0, float v0, float u1, float v1, int color, int overlay, int light
    ) {
-      Vector3f n = p.transformNormal(0.0F, -1.0F, 0.0F, new Vector3f());
+      Vector3f n = p.normal().transform(0.0F, -1.0F, 0.0F, new Vector3f());
       breastEdgeVertex(b, p.pose(), x0, y, z1, u0, v1, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x1, y, z1, u1, v1, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x1, y, z0, u1, v0, color, overlay, light, n);
@@ -2033,7 +2038,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
    protected static void breastWest(
       VertexConsumer b, Pose p, float x, float y0, float y1, float z0, float z1, float u0, float v0, float u1, float v1, int color, int overlay, int light
    ) {
-      Vector3f n = p.transformNormal(-1.0F, 0.0F, 0.0F, new Vector3f());
+      Vector3f n = p.normal().transform(-1.0F, 0.0F, 0.0F, new Vector3f());
       breastEdgeVertex(b, p.pose(), x, y0, z0, u0, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x, y0, z1, u1, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x, y1, z1, u1, v1, color, overlay, light, n);
@@ -2043,7 +2048,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
    protected static void breastEast(
       VertexConsumer b, Pose p, float x, float y0, float y1, float z0, float z1, float u0, float v0, float u1, float v1, int color, int overlay, int light
    ) {
-      Vector3f n = p.transformNormal(1.0F, 0.0F, 0.0F, new Vector3f());
+      Vector3f n = p.normal().transform(1.0F, 0.0F, 0.0F, new Vector3f());
       breastEdgeVertex(b, p.pose(), x, y0, z1, u1, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x, y0, z0, u0, v0, color, overlay, light, n);
       breastEdgeVertex(b, p.pose(), x, y1, z0, u0, v1, color, overlay, light, n);
@@ -2054,7 +2059,7 @@ public abstract class SharedBodyModel<T extends Entity> extends EntityModel<T> {
       VertexConsumer buffer, Matrix4f matrix, float x, float y, float z, float u, float v, int color, int overlay, int light, Vector3f normal
    ) {
       Vector3f point = matrix.transformPosition(x / 16.0F, y / 16.0F, z / 16.0F, new Vector3f());
-      buffer.addVertex(point.x(), point.y(), point.z(), color, u / 64.0F, v / 64.0F, overlay, light, normal.x(), normal.y(), normal.z());
+      Vtx.vertex(buffer, point.x(), point.y(), point.z(), color, u / 64.0F, v / 64.0F, overlay, light, normal.x(), normal.y(), normal.z());
    }
 
    static {

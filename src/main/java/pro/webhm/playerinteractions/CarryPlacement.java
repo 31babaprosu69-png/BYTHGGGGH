@@ -26,7 +26,7 @@ public final class CarryPlacement {
       for (double[] offset : OFFSETS) {
          double x = near.x + offset[0];
          double z = near.z + offset[1];
-         double half = (double)dimensions.width() / 2.0;
+         double half = (double)dimensions.width / 2.0;
          AABB column = new AABB(x - half, near.y - 2.01, z - half, x + half, near.y + 1.01, z + half);
          ArrayList<AABB> surfaces = new ArrayList<>(blocks.apply(column));
          surfaces.sort(Comparator.comparingDouble(b -> Math.abs(b.maxY - near.y)));

@@ -23,7 +23,7 @@ public abstract class SceneBodyMixin {
       LivingEntity entity, float yaw, float partialTick, PoseStack poses, MultiBufferSource buffers, int light, CallbackInfo ci
    ) {
       if (entity == Minecraft.getInstance().getCameraEntity() && FirstPersonMode.isFirstPersonPass() && SceneCameraBridge.fullBody()) {
-         if (((LivingEntityRenderer)this).getModel() instanceof PlayerModel<?> model) {
+         if (((LivingEntityRenderer)(Object)this).getModel() instanceof PlayerModel<?> model) {
             model.body.visible = model.leftLeg.visible = model.rightLeg.visible = true;
             model.jacket.visible = model.leftPants.visible = model.rightPants.visible = true;
             model.head.visible = model.hat.visible = false;

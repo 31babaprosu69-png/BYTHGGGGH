@@ -153,7 +153,7 @@ public final class AdornmentFrame {
       int bone = rig.boneIndex();
       this.bones[bone].transformPosition(out.set(rig.x, rig.y, rig.z));
       if (rig.linked() && !rig.preciseAnchor) {
-         this.surface(out, rig.links.getFirst().radius() * this.scale, this.bones[bone], out);
+         this.surface(out, rig.links.get(0).radius() * this.scale, this.bones[bone], out);
       }
 
       return out;

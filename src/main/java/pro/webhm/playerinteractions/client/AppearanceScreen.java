@@ -74,8 +74,10 @@ public final class AppearanceScreen extends Screen {
          AppearanceClient.previewArms = this.arms;
 
          try {
+            int previewX = this.left + 51;
+            int previewY = this.top + 28 + (this.panelHeight - 68) / 2 + 29;
             InventoryScreen.renderEntityInInventoryFollowsMouse(
-               g, this.left + 12, this.top + 28, this.left + 90, this.top + this.panelHeight - 40, 32, 0.0625F, (float)mx, (float)my, this.minecraft.player
+               g, previewX, previewY, 32, (float)(previewX - mx), (float)(previewY - 50 - my), this.minecraft.player
             );
          } finally {
             AppearanceClient.preview = null;

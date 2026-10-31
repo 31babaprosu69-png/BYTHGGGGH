@@ -154,13 +154,13 @@ public final class AnimationScreen extends Screen {
       return mx >= (double)(this.x + 22) && mx < (double)(this.x + this.w - 22) && my >= (double)this.listTop && my < (double)this.listBottom;
    }
 
-   public boolean mouseScrolled(double mx, double my, double dx, double dy) {
+   public boolean mouseScrolled(double mx, double my, double dy) {
       if (this.inList(mx, my) && dy != 0.0) {
          this.scroll = AnimationMenu.clamp(this.scroll - (int)Math.signum(dy), this.actions.size());
          this.rebuild();
          return true;
       } else {
-         return super.mouseScrolled(mx, my, dx, dy);
+         return super.mouseScrolled(mx, my, dy);
       }
    }
 

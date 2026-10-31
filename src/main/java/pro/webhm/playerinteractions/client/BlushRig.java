@@ -1,5 +1,6 @@
 package pro.webhm.playerinteractions.client;
 
+import pro.webhm.playerinteractions.compat.Vtx;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -55,8 +56,8 @@ public final class BlushRig {
                      float y = r.y - r.height / 2.0F + r.height * (float)(row + c[1]) / 48.0F;
                      int alpha = Math.round(255.0F * opacity(d, r, head, x, y, amount));
                      Vector3f p = stack.last().pose().transformPosition(x / 16.0F, (y - 8.0F) / 16.0F, -0.2546875F, new Vector3f());
-                     Vector3f n = stack.last().transformNormal(0.0F, 0.0F, -1.0F, new Vector3f());
-                     out.addVertex(p.x, p.y, p.z, alpha << 24 | d.color & 16777215, 0.5F, 0.5F, OverlayTexture.NO_OVERLAY, light, n.x, n.y, n.z);
+                     Vector3f n = stack.last().normal().transform(0.0F, 0.0F, -1.0F, new Vector3f());
+                     Vtx.vertex(out, p.x, p.y, p.z, alpha << 24 | d.color & 16777215, 0.5F, 0.5F, OverlayTexture.NO_OVERLAY, light, n.x, n.y, n.z);
                   }
                }
             }

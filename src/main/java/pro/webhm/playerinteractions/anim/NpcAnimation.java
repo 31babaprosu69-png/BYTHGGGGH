@@ -159,7 +159,7 @@ public class NpcAnimation {
       }
 
       this.petPoints.sort(Comparator.comparingInt(px -> px.tick));
-      this.petPoint = this.petPoints.isEmpty() ? null : this.petPoints.getFirst();
+      this.petPoint = this.petPoints.isEmpty() ? null : this.petPoints.get(0);
    }
 
    public NpcAnimation.FaceKey sampleFace(float time, boolean loop) {
@@ -646,7 +646,7 @@ public class NpcAnimation {
       if (this.entryTicks > 0 && time >= 0.0 && time < (double)this.entryTicks && !this.frames.isEmpty()) {
          Map<String, BoneTransform> target = this.sample((double)this.entryTicks, false);
          return AnimationEntry.pose(
-            this.frames.getFirst().pose,
+            this.frames.get(0).pose,
             this.entryPoseVelocity,
             target,
             AnimationEntry.velocity(target, this.sample((double)(this.entryTicks + 1), false)),
@@ -717,7 +717,7 @@ public class NpcAnimation {
    public ActorMotion sampleMotion(double time, boolean loop) {
       if (this.entryTicks > 0 && time >= 0.0 && time < (double)this.entryTicks && !this.frames.isEmpty()) {
          return AnimationEntry.motion(
-            this.frames.getFirst().motion,
+            this.frames.get(0).motion,
             this.sampleMotion((double)this.entryTicks, false),
             this.entryMotionVelocity,
             this.sampleMotion((double)(this.entryTicks + 1), false),

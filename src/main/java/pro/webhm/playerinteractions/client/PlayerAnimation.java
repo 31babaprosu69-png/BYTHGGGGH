@@ -102,7 +102,7 @@ public final class PlayerAnimation {
       float weight;
 
       void update(AbstractClientPlayer player) {
-         double now = (double)((float)player.level().getGameTime() + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true));
+         double now = (double)((float)player.level().getGameTime() + Minecraft.getInstance().getFrameTime());
          if (!Double.isFinite(this.sampled) || !(now <= this.sampled)) {
             this.sampled = now;
             SessionState next = InteractionClient.forPlayer(player.getUUID());

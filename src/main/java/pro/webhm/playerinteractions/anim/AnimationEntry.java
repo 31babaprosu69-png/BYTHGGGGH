@@ -14,7 +14,7 @@ public final class AnimationEntry {
    ) {
       NpcAnimation result = source.copy();
       ticks = Math.max(1, ticks);
-      if (result.frames.isEmpty() || result.frames.getFirst().tick > 0) {
+      if (result.frames.isEmpty() || result.frames.get(0).tick > 0) {
          result.putFrame(0, source.sample(0.0, false), source.sampleMotion(0.0, false));
       }
 

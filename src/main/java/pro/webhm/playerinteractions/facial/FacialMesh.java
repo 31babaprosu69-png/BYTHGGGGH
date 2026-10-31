@@ -1,5 +1,6 @@
 package pro.webhm.playerinteractions.facial;
 
+import pro.webhm.playerinteractions.compat.Vtx;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public final class FacialMesh {
       ArrayList<Float> distinct = new ArrayList<>();
 
       for (float x : values) {
-         if (distinct.isEmpty() || x - distinct.getLast() > 1.0E-4F) {
+         if (distinct.isEmpty() || x - distinct.get(distinct.size() - 1) > 1.0E-4F) {
             distinct.add(x);
          }
       }
@@ -643,8 +644,8 @@ public final class FacialMesh {
 
    private static void vertex(PoseStack s, VertexConsumer out, int light, int overlay, int color, FacialMesh.V v, Vector3f normal) {
       Vector3f point = s.last().pose().transformPosition(new Vector3f(v.p).div(16.0F));
-      Vector3f n = s.last().transformNormal(normal.x, normal.y, normal.z, new Vector3f()).normalize();
-      out.addVertex(point.x, point.y, point.z, color, v.u / 64.0F, v.v / 64.0F, overlay, light, n.x, n.y, n.z);
+      Vector3f n = s.last().normal().transform(normal.x, normal.y, normal.z, new Vector3f()).normalize();
+      Vtx.vertex(out, point.x, point.y, point.z, color, v.u / 64.0F, v.v / 64.0F, overlay, light, n.x, n.y, n.z);
    }
 
    private FacialMesh() {

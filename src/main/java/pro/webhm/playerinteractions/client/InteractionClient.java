@@ -438,7 +438,7 @@ public final class InteractionClient {
          event.setCanceled(true);
          TouchZones.Hit hit = touchHit();
          int zone = state.touching ? state.zone : (hit == null ? -1 : hit.zone());
-         if ((zone == 0 || zone == 12) && event.getScrollDeltaY() != 0.0) {
+         if ((zone == 0 || zone == 12) && event.getScrollDelta() != 0.0) {
             send(5, state.id, 0, 1 - state.mode, 0.0F, 0.0F);
          }
       }

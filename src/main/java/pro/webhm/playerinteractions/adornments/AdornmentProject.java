@@ -64,7 +64,7 @@ public final class AdornmentProject {
          r.links.add(l);
       }
 
-      r.links.getLast().grip = true;
+      r.links.get(r.links.size() - 1).grip = true;
       return r;
    }
 

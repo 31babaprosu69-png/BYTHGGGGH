@@ -27,7 +27,7 @@ public final class Appearance {
       if (choice != 1 && choice != 2) {
          for (Property property : profile.getProperties().get("textures")) {
             try {
-               JsonObject json = JsonParser.parseString(new String(Base64.getDecoder().decode(property.value()), StandardCharsets.UTF_8)).getAsJsonObject();
+               JsonObject json = JsonParser.parseString(new String(Base64.getDecoder().decode(property.getValue()), StandardCharsets.UTF_8)).getAsJsonObject();
                JsonObject textures = json.getAsJsonObject("textures");
                if (textures != null && textures.has("SKIN")) {
                   JsonObject skin = textures.getAsJsonObject("SKIN");

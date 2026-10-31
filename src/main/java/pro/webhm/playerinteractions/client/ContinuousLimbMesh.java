@@ -1,5 +1,6 @@
 package pro.webhm.playerinteractions.client;
 
+import pro.webhm.playerinteractions.compat.Vtx;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
@@ -267,7 +268,7 @@ final class ContinuousLimbMesh {
    private static void emit(PoseStack stack, VertexConsumer out, Vector3f p, float u, float v, Vector3f n, int light, int overlay, int color) {
       p.div(16.0F);
       stack.last().pose().transformPosition(p);
-      Vector3f normal = stack.last().transformNormal(n.x, n.y, n.z, new Vector3f());
-      out.addVertex(p.x, p.y, p.z, color, u / 64.0F, v / 64.0F, overlay, light, normal.x, normal.y, normal.z);
+      Vector3f normal = stack.last().normal().transform(n.x, n.y, n.z, new Vector3f());
+      Vtx.vertex(out, p.x, p.y, p.z, color, u / 64.0F, v / 64.0F, overlay, light, normal.x, normal.y, normal.z);
    }
 }

@@ -1,5 +1,6 @@
 package pro.webhm.playerinteractions.client;
 
+import pro.webhm.playerinteractions.compat.Vtx;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import java.util.HashMap;
@@ -203,7 +204,7 @@ public final class AvatarRenderer {
          rig.hideHead(own);
 
          try {
-            rig.renderToBuffer(
+            rig.renderToBufferArgb(
                stack,
                event.getMultiBufferSource().getBuffer(RenderType.entityTranslucent(SkinCompat.texture(p))),
                event.getPackedLight(),
@@ -238,7 +239,7 @@ public final class AvatarRenderer {
       }
 
       worldTransform(stack, yaw, 0.9375F);
-      stack.mulPose(rig.headMatrix());
+      Vtx.mulPose(stack, rig.headMatrix());
       Matrix4f matrix = stack.last().pose();
       Vector3f eye = matrix.transformPosition(0.0F, -0.25F, 0.0F, new Vector3f());
       Quaternionf orientation = matrix.getUnnormalizedRotation(new Quaternionf()).rotateZ((float) Math.PI);
@@ -253,7 +254,7 @@ public final class AvatarRenderer {
       double approach = s.joinTime(p.level().getGameTime(), partial);
       PoseStack stack = new PoseStack();
       worldTransform(stack, s.heading(a, time, approach), scale(s, p));
-      stack.mulPose(rig.headMatrix());
+      Vtx.mulPose(stack, rig.headMatrix());
       Matrix4f matrix = stack.last().pose();
       Vector3f eye = matrix.transformPosition(0.0F, -0.25F, 0.0F, new Vector3f());
       Quaternionf orientation = matrix.getUnnormalizedRotation(new Quaternionf()).rotateZ((float) Math.PI);
@@ -267,7 +268,7 @@ public final class AvatarRenderer {
       rig.prepare(p, pose, partial, false);
       PoseStack stack = new PoseStack();
       worldTransform(stack, TogetherClient.yaw(s, p, partial), 0.9375F);
-      stack.mulPose(rig.headMatrix());
+      Vtx.mulPose(stack, rig.headMatrix());
       Matrix4f matrix = stack.last().pose();
       Vector3f eye = matrix.transformPosition(0.0F, -0.25F, 0.0F, new Vector3f());
       Quaternionf orientation = matrix.getUnnormalizedRotation(new Quaternionf()).rotateZ((float) Math.PI);
