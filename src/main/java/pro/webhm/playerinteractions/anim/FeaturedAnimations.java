@@ -1,4 +1,4 @@
-aot_player_interactions/scenes/package pro.webhm.playerinteractions.anim;
+package pro.webhm.playerinteractions.anim;
 
 import java.io.IOException;
 import java.io.InputStream;
