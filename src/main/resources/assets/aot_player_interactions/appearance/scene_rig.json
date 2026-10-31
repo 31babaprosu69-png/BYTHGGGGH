@@ -1,0 +1,20 @@
+{
+  "scale": 0.90234375,
+  "modelShape": {
+    "armDepth": 2.5,
+    "armHeight": 1.0,
+    "armPivotHeight": 0.0,
+    "torsoWidth": 8.0,
+    "waistWidth": 6.0,
+    "hipWidth": 8.0,
+    "shapeSecondLayer": false,
+    "headWidth": 1.0,
+    "headHeight": 1.0,
+    "headDepth": 1.0
+  },
+  "rootPivot": "center",
+  "pivotX": 0.0,
+  "pivotY": 0.0,
+  "pivotZ": 0.0,
+  "posOffsetY": 0.0
+}

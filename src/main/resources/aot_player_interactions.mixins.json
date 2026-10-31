@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "pro.webhm.playerinteractions.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "aot_player_interactions.refmap.json",
+  "mixins": ["PlayerTravelMixin", "ServerMoveMixin", "PairPushMixin"],
+  "client": ["CameraMixin", "SceneBodyMixin", "TouchMouseMixin", "PlayerSkinMixin"],
+  "injectors": {"defaultRequire": 1}
+}

@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "size": 0.7988722,
+  "separation": -0.39,
+  "height": -0.453125,
+  "depth": -2.375,
+  "rotation": 24.609375,
+  "leftPitch": -7.03,
+  "leftYaw": -6.33,
+  "leftRoll": -9.14,
+  "rightPitch": -9.14,
+  "rightYaw": 3.52,
+  "rightRoll": 4.22,
+  "physics": true,
+  "dualPhysics": true,
+  "bounce": 1.0,
+  "jacket": true,
+  "pixelVolume": true,
+  "volumeMask": 1099511627775,
+  "volumePixels": "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+  "volumePixelsScale": 2
+}

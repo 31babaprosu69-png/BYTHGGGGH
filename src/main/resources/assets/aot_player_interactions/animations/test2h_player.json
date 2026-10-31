@@ -1,0 +1,206 @@
+{
+  "winks": [],
+  "cues": [],
+  "petPoint": {
+    "id": "32a1d70e-e145-4221-b577-edb088a3ef5e",
+    "repeat": false,
+    "tick": 182,
+    "petting": true,
+    "mode": 1,
+    "surface": true,
+    "anchored": false,
+    "strokeVersion": 2,
+    "anchorX": 0.0,
+    "anchorY": 0.0,
+    "anchorZ": 0.0,
+    "target": "0a2ea6cc-8b85-4888-9750-922fcbc92329",
+    "bone": "body",
+    "face": 0,
+    "u": 0.5,
+    "v": 0.5,
+    "area": 24.0,
+    "radius": 3.0,
+    "depth": 0.45,
+    "reachLimit": 170.0,
+    "yawLimit": 18.0,
+    "pitchLimit": 14.0,
+    "elbowLimit": 10.0
+  },
+  "petPoints": [
+    {
+      "id": "32a1d70e-e145-4221-b577-edb088a3ef5e",
+      "repeat": false,
+      "tick": 182,
+      "petting": true,
+      "mode": 1,
+      "surface": true,
+      "anchored": false,
+      "strokeVersion": 2,
+      "anchorX": 0.0,
+      "anchorY": 0.0,
+      "anchorZ": 0.0,
+      "target": "0a2ea6cc-8b85-4888-9750-922fcbc92329",
+      "bone": "body",
+      "face": 0,
+      "u": 0.5,
+      "v": 0.5,
+      "area": 24.0,
+      "radius": 3.0,
+      "depth": 0.45,
+      "reachLimit": 170.0,
+      "yawLimit": 18.0,
+      "pitchLimit": 14.0,
+      "elbowLimit": 10.0
+    }
+  ],
+  "adornmentKeys": [],
+  "faceKeys": [],
+  "name": "test2h_player",
+  "bedRelative": false,
+  "smooth": true,
+  "transitionTicks": 0.0,
+  "entryTicks": 0,
+  "withItems": false,
+  "duration": 900,
+  "frames": [
+    {
+      "tick": 100,
+      "motion": {
+        "x": -0.057794046,
+        "y": -0.013240549,
+        "z": 0.37508857,
+        "yaw": -5.564076,
+        "leadPlayer": false,
+        "groundOffset": 0.0
+      },
+      "pose": {
+        "head": [
+          21.743
+        ],
+        "right_forearm": [],
+        "left_shin": [],
+        "chest": [],
+        "right_arm": [],
+        "left_forearm": [],
+        "right_shin": [],
+        "left_leg": [],
+        "left_arm": [],
+        "right_leg": [],
+        "root": [],
+        "body": []
+      }
+    },
+    {
+      "tick": 119,
+      "motion": {
+        "x": -0.03083658,
+        "y": -0.013240549,
+        "z": 0.674567,
+        "yaw": -5.564076,
+        "leadPlayer": false,
+        "groundOffset": 0.0
+      },
+      "pose": {
+        "head": [
+          21.743
+        ],
+        "right_forearm": [],
+        "left_shin": [],
+        "chest": [],
+        "right_arm": [],
+        "left_forearm": [],
+        "right_shin": [],
+        "left_leg": [],
+        "left_arm": [],
+        "right_leg": [],
+        "root": [],
+        "body": []
+      }
+    },
+    {
+      "tick": 139,
+      "motion": {
+        "x": -0.03083658,
+        "y": -0.013240549,
+        "z": 0.674567,
+        "yaw": -5.564076,
+        "leadPlayer": false,
+        "groundOffset": 0.0
+      },
+      "pose": {
+        "head": [
+          21.743
+        ],
+        "right_forearm": [],
+        "left_shin": [],
+        "chest": [],
+        "right_arm": [],
+        "left_forearm": [],
+        "right_shin": [
+          108.882
+        ],
+        "left_leg": [],
+        "left_arm": [],
+        "right_leg": [
+          -44.674
+        ],
+        "root": [],
+        "body": [
+          -0.819
+        ]
+      }
+    },
+    {
+      "tick": 175,
+      "motion": {
+        "x": 0.012596049,
+        "y": -0.013240549,
+        "z": 1.1570733,
+        "yaw": -5.564076,
+        "leadPlayer": false,
+        "groundOffset": 0.0
+      },
+      "pose": {
+        "head": [
+          26.32
+        ],
+        "right_forearm": [],
+        "left_shin": [
+          93.873
+        ],
+        "chest": [],
+        "right_arm": [
+          -70.986
+        ],
+        "left_forearm": [],
+        "right_shin": [
+          108.882
+        ],
+        "left_leg": [
+          -57.165
+        ],
+        "left_arm": [
+          -103.31
+        ],
+        "right_leg": [
+          -44.674
+        ],
+        "root": [
+          24.085
+        ],
+        "body": [
+          -0.819
+        ]
+      }
+    }
+  ],
+  "sceneLoopStart": -1,
+  "continuousAction": false,
+  "playerJoinTick": 100,
+  "holdSceneLoopEnd": false,
+  "sceneLoopEnd": -1,
+  "sceneOffsetX": 0.03472084,
+  "sceneOffsetY": -0.5625,
+  "sceneOffsetZ": -1.5307002,
+  "sceneOffsetYaw": 5.1436005
+}
