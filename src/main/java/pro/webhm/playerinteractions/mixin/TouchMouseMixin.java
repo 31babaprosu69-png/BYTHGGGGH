@@ -20,7 +20,8 @@ public abstract class TouchMouseMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void touch(double seconds, CallbackInfo ci) {
+   // 1.20.1: MouseHandler.turnPlayer() takes no arguments (the double param was added in 1.20.2+/1.21)
+   private void touch(CallbackInfo ci) {
       if (SceneCameraBridge.mouse.test(this.accumulatedDX, this.accumulatedDY)) {
          this.accumulatedDX = this.accumulatedDY = 0.0;
          ci.cancel();
