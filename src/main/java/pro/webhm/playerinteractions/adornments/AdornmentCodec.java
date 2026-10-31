@@ -94,65 +94,64 @@ public final class AdornmentCodec {
    }
 
    public static AdornmentProject parse(String input) {
-      if (input != null && input.length() <= 180000) {
-         String raw = input.strip();
-         if (!raw.startsWith("AOTDEC1:")) {
-            int depth = 0;
-            boolean quoted = false;
-            boolean escape = false;
+      if (input == null || input.length() > 180000) {
+         throw new IllegalArgumentException("Файл слишком велик");
+      }
 
-            for (int i = 0; i < raw.length(); i++) {
-               char c = raw.charAt(i);
-               if (escape) {
-                  escape = false;
-               } else if (quoted && c == '\\') {
-                  escape = true;
-               } else if (c == '"') {
-                  quoted = !quoted;
-               } else if (!quoted) {
-                  if (c == '{' || c == '[') {
-                     if (++depth > 12) {
-                        throw new IllegalArgumentException("Слишком сложная структура проекта");
-                     }
-                  }
-
-                  if (c == '}' || c == ']') {
-                     depth--;
-                  }
-               }
-            }
-
-            try {
-               JsonElement tree = JsonParser.parseString(raw);
-               if (tree.isJsonObject() && tree.getAsJsonObject().has("version")) {
-                  AdornmentProject p = (AdornmentProject)JSON.fromJson(tree, AdornmentProject.class);
-                  p.validate();
-                  return p;
-               } else {
-                  throw new IllegalArgumentException("Это не файл украшений");
-               }
-            } catch (JsonParseException var8) {
-               throw new IllegalArgumentException("Повреждённый файл украшений", var8);
-            }
-         } else if (raw.length() > 24000) {
+      String raw = input.strip();
+      if (raw.startsWith("AOTDEC1:")) {
+         if (raw.length() > 24000) {
             throw new IllegalArgumentException("Код слишком велик");
-         } else {
-            try (GZIPInputStream stream = new GZIPInputStream(new ByteArrayInputStream(Base64.getUrlDecoder().decode(raw.substring("AOTDEC1:".length()))))) {
-               label117: {
-                  byte[] bytes = stream.readNBytes(180001);
-                  if (bytes.length <= 180000) {
-                     raw = new String(bytes, StandardCharsets.UTF_8);
-                     break label117;
-                  }
+         }
 
-                  throw new IllegalArgumentException("Распакованный проект слишком велик");
+         try (GZIPInputStream stream = new GZIPInputStream(new ByteArrayInputStream(Base64.getUrlDecoder().decode(raw.substring("AOTDEC1:".length()))))) {
+            byte[] bytes = stream.readNBytes(180001);
+            if (bytes.length > 180000) {
+               throw new IllegalArgumentException("Распакованный проект слишком велик");
+            }
+
+            raw = new String(bytes, StandardCharsets.UTF_8);
+         } catch (IllegalArgumentException | IOException var10) {
+            throw new IllegalArgumentException("Повреждённый код украшения", var10);
+         }
+      }
+
+      int depth = 0;
+      boolean quoted = false;
+      boolean escape = false;
+
+      for (int i = 0; i < raw.length(); i++) {
+         char c = raw.charAt(i);
+         if (escape) {
+            escape = false;
+         } else if (quoted && c == '\\') {
+            escape = true;
+         } else if (c == '"') {
+            quoted = !quoted;
+         } else if (!quoted) {
+            if (c == '{' || c == '[') {
+               if (++depth > 12) {
+                  throw new IllegalArgumentException("Слишком сложная структура проекта");
                }
-            } catch (IllegalArgumentException | IOException var10) {
-               throw new IllegalArgumentException("Повреждённый код украшения", var10);
+            }
+
+            if (c == '}' || c == ']') {
+               depth--;
             }
          }
-      } else {
-         throw new IllegalArgumentException("Файл слишком велик");
+      }
+
+      try {
+         JsonElement tree = JsonParser.parseString(raw);
+         if (tree.isJsonObject() && tree.getAsJsonObject().has("version")) {
+            AdornmentProject p = (AdornmentProject)JSON.fromJson(tree, AdornmentProject.class);
+            p.validate();
+            return p;
+         } else {
+            throw new IllegalArgumentException("Это не файл украшений");
+         }
+      } catch (JsonParseException var8) {
+         throw new IllegalArgumentException("Повреждённый файл украшений", var8);
       }
    }
 
