@@ -1,0 +1,74 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+version = mod_version
+group = 'pro.webhm.playerinteractions'
+base { archivesName = "LovsPlayer-forge-${minecraft_version}" }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: minecraft_version
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods { "${mod_id}" { source sourceSets.main } }
+        }
+        client { property 'forge.enabledGameTestNamespaces', mod_id }
+        server { property 'forge.enabledGameTestNamespaces', mod_id; args '--nogui' }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.kosmx.dev/' }          // player-animator, bendy-lib
+    maven { url = 'https://api.modrinth.com/maven' }     // fallback source for both
+}
+
+jarJar { enable() }
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    // Player Animator for 1.20.1 (API is 1.x, NOT the 2.0.x the 1.21.1 jar used).
+    // Verify the exact version string on https://maven.kosmx.dev/ if resolution fails.
+    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
+
+    // MP3 decoder used by Mp3AudioStream. Bundled into our jar (JarJar), same as the original.
+    implementation 'javazoom:jlayer:1.0.1'
+    jarJar(group: 'javazoom', name: 'jlayer', version: '[1.0.1,1.1)')
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var props = [
+        minecraft_version: minecraft_version, forge_version: forge_version,
+        mod_id: mod_id, mod_version: mod_version, player_anim_min: player_anim_min
+    ]
+    inputs.properties props
+    filesMatching(['META-INF/mods.toml']) { expand props }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest.attributes([
+        'MixinConfigs'            : "${mod_id}.mixins.json",
+        'Specification-Title'     : mod_id,
+        'Implementation-Version'  : project.version
+    ])
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
