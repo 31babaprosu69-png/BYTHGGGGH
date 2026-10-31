@@ -1,4 +1,4 @@
-package pro.webhm.playerinteractions.anim;
+aot_player_interactions/scenes/package pro.webhm.playerinteractions.anim;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +11,7 @@ public final class FeaturedAnimations {
       ArrayList<AnimationBundle> result = new ArrayList<>();
 
       for (String name : List.of("01", "02", "03")) {
-         try (InputStream in = FeaturedAnimations.class.getResourceAsStream("/assets/aot_player_interactions/animations/featured/" + name + ".json")) {
+         try (InputStream in = FeaturedAnimations.class.getResourceAsStream("/assets/aot_player_interactions/scenes/featured/" + name + ".json")) {
             if (in == null) {
                throw new IOException("Missing packaged animation " + name);
             }

@@ -78,7 +78,7 @@ public final class Clip {
    private static Clip load(String name) {
       try {
          Clip var3;
-         try (InputStream stream = Clip.class.getResourceAsStream("/assets/aot_player_interactions/animations/" + name + ".json")) {
+         try (InputStream stream = Clip.class.getResourceAsStream("/assets/aot_player_interactions/scenes/" + name + ".json")) {
             if (stream == null) {
                throw new IOException("Missing " + name);
             }
