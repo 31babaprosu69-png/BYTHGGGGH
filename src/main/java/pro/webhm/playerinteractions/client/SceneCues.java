@@ -29,7 +29,7 @@ import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
+import net.minecraftforge.event.TickEvent;
 import pro.webhm.playerinteractions.Actions;
 import pro.webhm.playerinteractions.PlayerInteractions;
 import pro.webhm.playerinteractions.SessionState;
@@ -59,7 +59,10 @@ public final class SceneCues {
    }
 
    @SubscribeEvent
-   public static void tick(Post event) {
+   public static void tick(TickEvent.ClientTickEvent event) {
+      if (event.phase != TickEvent.Phase.END) {
+         return;
+      }
       Minecraft mc = Minecraft.getInstance();
       HashSet<String> active = new HashSet<>();
       CAPTIONS.clear();
@@ -104,7 +107,7 @@ public final class SceneCues {
    }
 
    @SubscribeEvent
-   public static void captions(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event) {
+   public static void captions(net.minecraftforge.client.event.RenderGuiEvent.Post event) {
       Minecraft mc = Minecraft.getInstance();
       if (!mc.options.hideGui && mc.screen == null) {
          GuiGraphics g = event.getGuiGraphics();

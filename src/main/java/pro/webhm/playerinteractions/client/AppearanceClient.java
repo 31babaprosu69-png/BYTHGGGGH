@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.PacketDistributor;
 import pro.webhm.playerinteractions.Appearance;
 import pro.webhm.playerinteractions.Network;
 import pro.webhm.playerinteractions.anim.Clip;
@@ -35,8 +33,8 @@ public final class AppearanceClient {
    }
 
    public static void save(BreastData b, int arms) {
-      PacketDistributor.sendToServer(
-         new Network.AppearanceChange(Clip.JSON.toJson(new Appearance.Settings(Appearance.sanitize(b), Appearance.arms(arms)))), new CustomPacketPayload[0]
+      Network.toServer(
+         new Network.AppearanceChange(Clip.JSON.toJson(new Appearance.Settings(Appearance.sanitize(b), Appearance.arms(arms))))
       );
    }
 

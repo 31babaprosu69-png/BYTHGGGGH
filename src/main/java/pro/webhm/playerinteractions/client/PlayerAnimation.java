@@ -13,7 +13,6 @@ import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.resources.PlayerSkin.Model;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -58,7 +57,7 @@ public final class PlayerAnimation {
             Vec3 offset = new Vec3(s.contactX, s.contactY, s.contactZ).yRot(-((float)Math.toRadians((double)target.yBodyRot)));
             Vec3 at = target.getPosition(partial).add(offset);
             Vec3 pos = p.getPosition(partial);
-            b.arm.begin(base, (float)pos.x, (float)pos.y, (float)pos.z, p.yBodyRot, p.getSkin().model() == Model.SLIM);
+            b.arm.begin(base, (float)pos.x, (float)pos.y, (float)pos.z, p.yBodyRot, SkinCompat.slim(p));
             return new HashMap<>(b.arm.solve(new Vector3f((float)at.x, (float)at.y, (float)at.z), 170.0F, b.weight));
          }
       } else {

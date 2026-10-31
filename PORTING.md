@@ -1,6 +1,6 @@
 # LovsPlayer: NeoForge 1.21.1 → Forge 1.20.1 port
 
-Status: **scaffold + decompiled source + mechanical pass 1. NOT yet compiled.**
+Status: **round 2.** Build toolchain verified on GitHub Actions (Forge 1.20.1 + mixin refmap OK). Round 1 compile showed 64 errors, all in categories 1-3 below; pass 2 (`tools/pass2.py`) addresses networking, tick/GUI/damage events and PlayerSkin. Rendering (#4) errors are expected next.
 The sandbox this was prepared in cannot reach maven.minecraftforge.net / Mojang, so nothing here has been built.
 The first GitHub Actions run will produce the real error list; fix in the order below.
 

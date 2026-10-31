@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.PlayerSkin.Model;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -41,7 +40,7 @@ public final class AvatarRenderer {
          slim = new AvatarRig(true);
       }
 
-      return p.getSkin().model() == Model.SLIM ? slim : wide;
+      return SkinCompat.slim(p) ? slim : wide;
    }
 
    public static boolean usesRig(AbstractClientPlayer p) {
@@ -87,7 +86,7 @@ public final class AvatarRenderer {
             worldTransform(stack, TogetherClient.yaw(s, p, partial), 0.9375F);
             rig.renderHeldArm(
                stack,
-               event.getMultiBufferSource().getBuffer(RenderType.entityTranslucent(p.getSkin().texture())),
+               event.getMultiBufferSource().getBuffer(RenderType.entityTranslucent(SkinCompat.texture(p))),
                event.getPackedLight(),
                OverlayTexture.NO_OVERLAY,
                left
@@ -206,7 +205,7 @@ public final class AvatarRenderer {
          try {
             rig.renderToBuffer(
                stack,
-               event.getMultiBufferSource().getBuffer(RenderType.entityTranslucent(p.getSkin().texture())),
+               event.getMultiBufferSource().getBuffer(RenderType.entityTranslucent(SkinCompat.texture(p))),
                event.getPackedLight(),
                OverlayTexture.NO_OVERLAY,
                -1
@@ -281,7 +280,7 @@ public final class AvatarRenderer {
       slim = null;
       wide = null;
 
-      for (Model skin : event.getSkins()) {
+      for (String skin : event.getSkins()) {
          PlayerRenderer renderer = (PlayerRenderer)event.getSkin(skin);
          if (renderer != null) {
             renderer.addLayer(new AvatarRenderer.BreastLayer(renderer));
@@ -315,7 +314,7 @@ public final class AvatarRenderer {
             rig.setPlayerTorso(((PlayerModel)this.getParentModel()).body);
             stack.pushPose();
             ((PlayerModel)this.getParentModel()).body.translateAndRotate(stack);
-            rig.renderBreasts(stack, buffers.getBuffer(RenderType.entityTranslucent(p.getSkin().texture())), light, OverlayTexture.NO_OVERLAY);
+            rig.renderBreasts(stack, buffers.getBuffer(RenderType.entityTranslucent(SkinCompat.texture(p))), light, OverlayTexture.NO_OVERLAY);
             stack.popPose();
          }
       }

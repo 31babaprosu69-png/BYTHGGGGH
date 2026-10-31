@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.resources.PlayerSkin.Model;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -90,7 +89,7 @@ public final class TogetherClient {
       if (s.action == 6) {
          return !owner
             ? carriedPose(var19, weight, (float)(distance * 2.0 * Math.PI / 1.45), s.pairSpeed)
-            : carryArms(var19, p.getSkin().model() == Model.SLIM, weight);
+            : carryArms(var19, SkinCompat.slim(p), weight);
       } else {
          if (!owner) {
             var19 = new HashMap(var19);
@@ -106,8 +105,8 @@ public final class TogetherClient {
          if (p.level().getPlayerByUUID(owner ? s.recipient().id : s.initiator().id) instanceof AbstractClientPlayer partner) {
             Vec3 var22 = position(s, p, partial);
             Vec3 theirs = position(s, partner, partial);
-            boolean slim = p.getSkin().model() == Model.SLIM;
-            boolean partnerSlim = partner.getSkin().model() == Model.SLIM;
+            boolean slim = SkinCompat.slim(p);
+            boolean partnerSlim = SkinCompat.slim(partner);
             float yaw = yaw(s, p, partial);
             float otherYaw = yaw(s, partner, partial);
             Vector3f hand = owner

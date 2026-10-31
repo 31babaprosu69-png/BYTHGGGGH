@@ -52,7 +52,7 @@ public final class SkinCache {
          if (rl != null) {
             return rl;
          } else if (FAILED.contains(key)) {
-            return DefaultPlayerSkin.getDefaultTexture();
+            return DefaultPlayerSkin.getDefaultSkin();
          } else if (key.startsWith("configskin:")) {
             return loadConfigSkin(key);
          } else if (key.startsWith("jar:")) {
@@ -68,7 +68,7 @@ public final class SkinCache {
             ResourceLocation loc = ResourceLocation.tryParse(key.substring("res:".length()));
             if (loc == null) {
                FAILED.add(key);
-               return DefaultPlayerSkin.getDefaultTexture();
+               return DefaultPlayerSkin.getDefaultSkin();
             } else {
                return loadBundled(key, loc);
             }
@@ -77,10 +77,10 @@ public final class SkinCache {
                POOL.submit(() -> load(key));
             }
 
-            return DefaultPlayerSkin.getDefaultTexture();
+            return DefaultPlayerSkin.getDefaultSkin();
          }
       } else {
-         return DefaultPlayerSkin.getDefaultTexture();
+         return DefaultPlayerSkin.getDefaultSkin();
       }
    }
 
@@ -271,7 +271,7 @@ public final class SkinCache {
       } catch (Exception var9) {
          FAILED.add(key);
          BodyRuntime.LOG.warn("Cannot load character skin {}: {}", key, var9.toString());
-         return DefaultPlayerSkin.getDefaultTexture();
+         return DefaultPlayerSkin.getDefaultSkin();
       }
    }
 
@@ -299,7 +299,7 @@ public final class SkinCache {
       } catch (Exception var10) {
          FAILED.add(key);
          BodyRuntime.LOG.warn("Не удалось загрузить встроенный скин {}: {}", key, var10.toString());
-         return DefaultPlayerSkin.getDefaultTexture();
+         return DefaultPlayerSkin.getDefaultSkin();
       }
    }
 
@@ -327,7 +327,7 @@ public final class SkinCache {
       } catch (Exception var9) {
          FAILED.add(key);
          BodyRuntime.LOG.warn("Не удалось напрямую загрузить встроенный скин {}: {}", key, var9.toString());
-         return DefaultPlayerSkin.getDefaultTexture();
+         return DefaultPlayerSkin.getDefaultSkin();
       }
    }
 

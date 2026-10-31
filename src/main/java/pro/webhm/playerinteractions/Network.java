@@ -1,17 +1,21 @@
 package pro.webhm.playerinteractions;
 
+import java.util.Optional;
 import java.util.UUID;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type;
+import java.util.function.Supplier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 import pro.webhm.playerinteractions.client.AnimationLibrary;
 import pro.webhm.playerinteractions.client.InteractionClient;
 
+/** Forge 1.20.1 SimpleChannel replacement for the NeoForge 1.21.1 payload registrar. */
 public final class Network {
    public static final int REQUEST = 0;
    public static final int ACCEPT = 1;
@@ -25,90 +29,130 @@ public final class Network {
    public static final int REPEAT = 9;
    public static final UUID NONE = new UUID(0L, 0L);
 
-   public static void register(RegisterPayloadHandlersEvent event) {
-      PayloadRegistrar r = event.registrar("3");
-      r.playToClient(Network.CatalogData.TYPE, Network.CatalogData.CODEC, (p, c) -> {
-         if (FMLEnvironment.dist.isClient()) {
-            c.enqueueWork(() -> AnimationLibrary.receive(p));
-         }
-      });
-      r.playToServer(Network.AppearanceChange.TYPE, Network.AppearanceChange.CODEC, (p, c) -> c.enqueueWork(() -> {
-            if (c.player() instanceof ServerPlayer player) {
-               AppearanceServer.set(player, p.json());
-            }
-         }));
-      r.playToServer(Network.Command.TYPE, Network.Command.CODEC, (p, c) -> c.enqueueWork(() -> {
-            if (p.valid() && c.player() instanceof ServerPlayer player) {
-               InteractionServer.command(player, p);
-            }
-         }));
-      r.playToClient(Network.Update.TYPE, Network.Update.CODEC, (p, c) -> {
-         if (FMLEnvironment.dist.isClient()) {
-            c.enqueueWork(() -> InteractionClient.receive(p));
-         }
-      });
+   private static final String PROTOCOL = "3";
+   public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+      new ResourceLocation(PlayerInteractions.ID, "main"), () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals
+   );
+   private static boolean registered;
+
+   public static synchronized void register() {
+      if (registered) {
+         return;
+      }
+      registered = true;
+      int id = 0;
+      CHANNEL.registerMessage(id++, CatalogData.class, CatalogData::encode, CatalogData::decode, CatalogData::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+      CHANNEL.registerMessage(id++, AppearanceChange.class, AppearanceChange::encode, AppearanceChange::decode, AppearanceChange::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+      CHANNEL.registerMessage(id++, Command.class, Command::encode, Command::decode, Command::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+      CHANNEL.registerMessage(id++, Update.class, Update::encode, Update::decode, Update::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+   }
+
+   // ---- send helpers (replace PacketDistributor.sendToPlayer / sendToServer / sendToPlayersTrackingEntityAndSelf)
+   public static void toPlayer(ServerPlayer player, Object message) {
+      CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), message);
+   }
+
+   public static void toTrackingAndSelf(ServerPlayer player, Object message) {
+      CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), message);
+   }
+
+   public static void toServer(Object message) {
+      CHANNEL.sendToServer(message);
    }
 
    private Network() {
    }
 
-   public static record AppearanceChange(String json) implements CustomPacketPayload {
-      public static final Type<Network.AppearanceChange> TYPE = new Type(PlayerInteractions.id("appearance_change"));
-      public static final StreamCodec<RegistryFriendlyByteBuf, Network.AppearanceChange> CODEC = StreamCodec.of(
-         (b, p) -> b.writeUtf(p.json, 4096), b -> new Network.AppearanceChange(b.readUtf(4096))
-      );
+   public static record AppearanceChange(String json) {
+      public static void encode(AppearanceChange p, FriendlyByteBuf b) {
+         b.writeUtf(p.json, 4096);
+      }
 
-      public Type<? extends CustomPacketPayload> type() {
-         return TYPE;
+      public static AppearanceChange decode(FriendlyByteBuf b) {
+         return new AppearanceChange(b.readUtf(4096));
+      }
+
+      public static void handle(AppearanceChange p, Supplier<NetworkEvent.Context> ctx) {
+         NetworkEvent.Context c = ctx.get();
+         c.enqueueWork(() -> {
+            ServerPlayer player = c.getSender();
+            if (player != null) {
+               AppearanceServer.set(player, p.json());
+            }
+         });
+         c.setPacketHandled(true);
       }
    }
 
-   public static record CatalogData(int generation, int action, byte[] json) implements CustomPacketPayload {
-      public static final Type<Network.CatalogData> TYPE = new Type(PlayerInteractions.id("catalog_data"));
-      public static final StreamCodec<RegistryFriendlyByteBuf, Network.CatalogData> CODEC = StreamCodec.of((b, p) -> {
+   public static record CatalogData(int generation, int action, byte[] json) {
+      public static void encode(CatalogData p, FriendlyByteBuf b) {
          if (p.json.length > 524288) {
             throw new IllegalArgumentException("Catalogue packet too large");
-         } else {
-            b.writeVarInt(p.generation);
-            b.writeVarInt(p.action);
-            b.writeByteArray(p.json);
          }
-      }, b -> new Network.CatalogData(b.readVarInt(), b.readVarInt(), b.readByteArray(524288)));
+         b.writeVarInt(p.generation);
+         b.writeVarInt(p.action);
+         b.writeByteArray(p.json);
+      }
 
-      public Type<? extends CustomPacketPayload> type() {
-         return TYPE;
+      public static CatalogData decode(FriendlyByteBuf b) {
+         return new CatalogData(b.readVarInt(), b.readVarInt(), b.readByteArray(524288));
+      }
+
+      public static void handle(CatalogData p, Supplier<NetworkEvent.Context> ctx) {
+         NetworkEvent.Context c = ctx.get();
+         if (FMLEnvironment.dist.isClient()) {
+            c.enqueueWork(() -> AnimationLibrary.receive(p));
+         }
+         c.setPacketHandled(true);
       }
    }
 
-   public static record Command(int op, UUID token, int target, int value, float x, float y) implements CustomPacketPayload {
-      public static final Type<Network.Command> TYPE = new Type(PlayerInteractions.id("command"));
-      public static final StreamCodec<RegistryFriendlyByteBuf, Network.Command> CODEC = StreamCodec.of((b, p) -> {
+   public static record Command(int op, UUID token, int target, int value, float x, float y) {
+      public static void encode(Command p, FriendlyByteBuf b) {
          b.writeVarInt(p.op);
          b.writeUUID(p.token);
          b.writeVarInt(p.target);
          b.writeVarInt(p.value);
          b.writeFloat(p.x);
          b.writeFloat(p.y);
-      }, b -> new Network.Command(b.readVarInt(), b.readUUID(), b.readVarInt(), b.readVarInt(), b.readFloat(), b.readFloat()));
+      }
+
+      public static Command decode(FriendlyByteBuf b) {
+         return new Command(b.readVarInt(), b.readUUID(), b.readVarInt(), b.readVarInt(), b.readFloat(), b.readFloat());
+      }
+
+      public static void handle(Command p, Supplier<NetworkEvent.Context> ctx) {
+         NetworkEvent.Context c = ctx.get();
+         c.enqueueWork(() -> {
+            ServerPlayer player = c.getSender();
+            if (p.valid() && player != null) {
+               InteractionServer.command(player, p);
+            }
+         });
+         c.setPacketHandled(true);
+      }
 
       public boolean valid() {
          return this.op >= 0 && this.op <= 9 && Float.isFinite(this.x) && Float.isFinite(this.y) && Math.abs(this.x) <= 1.0F && Math.abs(this.y) <= 1.0F;
       }
-
-      public Type<? extends CustomPacketPayload> type() {
-         return TYPE;
-      }
    }
 
-   public static record Update(String kind, String json) implements CustomPacketPayload {
-      public static final Type<Network.Update> TYPE = new Type(PlayerInteractions.id("update"));
-      public static final StreamCodec<RegistryFriendlyByteBuf, Network.Update> CODEC = StreamCodec.of((b, p) -> {
+   public static record Update(String kind, String json) {
+      public static void encode(Update p, FriendlyByteBuf b) {
          b.writeUtf(p.kind, 16);
          b.writeUtf(p.json, 30000);
-      }, b -> new Network.Update(b.readUtf(16), b.readUtf(30000)));
+      }
 
-      public Type<? extends CustomPacketPayload> type() {
-         return TYPE;
+      public static Update decode(FriendlyByteBuf b) {
+         return new Update(b.readUtf(16), b.readUtf(30000));
+      }
+
+      public static void handle(Update p, Supplier<NetworkEvent.Context> ctx) {
+         NetworkEvent.Context c = ctx.get();
+         if (FMLEnvironment.dist.isClient()) {
+            c.enqueueWork(() -> InteractionClient.receive(p));
+         }
+         c.setPacketHandled(true);
       }
    }
 }

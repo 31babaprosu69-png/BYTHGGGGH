@@ -12,10 +12,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.resources.PlayerSkin.Model;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -28,13 +26,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggingOut;
-import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.client.event.InputEvent.MouseScrollingEvent;
 import net.minecraftforge.client.event.InputEvent.MouseButton.Pre;
 import net.minecraftforge.client.event.ScreenEvent.Opening;
 import net.minecraftforge.client.event.ViewportEvent.ComputeCameraAngles;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 import pro.webhm.playerinteractions.Actions;
 import pro.webhm.playerinteractions.InteractionServer;
@@ -92,7 +88,7 @@ public final class InteractionClient {
 
    public static void send(int op, UUID token, int target, int value, float x, float y) {
       if (Minecraft.getInstance().getConnection() != null) {
-         PacketDistributor.sendToServer(new Network.Command(op, token, target, value, x, y), new CustomPacketPayload[0]);
+         Network.toServer(new Network.Command(op, token, target, value, x, y));
       }
    }
 
@@ -257,7 +253,10 @@ public final class InteractionClient {
    }
 
    @SubscribeEvent
-   public static void tick(Post event) {
+   public static void tick(TickEvent.ClientTickEvent event) {
+      if (event.phase != TickEvent.Phase.END) {
+         return;
+      }
       Minecraft mc = Minecraft.getInstance();
       if (mc.player != null && mc.level != null) {
          long now = mc.level.getGameTime();
@@ -395,7 +394,7 @@ public final class InteractionClient {
       if (state != null && state.action == 4 && state.initiator().id.equals(mc.player.getUUID())) {
          Player target = mc.level.getPlayerByUUID(state.recipient().id);
          return target instanceof AbstractClientPlayer player
-            ? TouchZones.pick(target, Map.of(), mc.player.getEyePosition(), mc.player.getLookAngle(), player.getSkin().model() == Model.SLIM)
+            ? TouchZones.pick(target, Map.of(), mc.player.getEyePosition(), mc.player.getLookAngle(), SkinCompat.slim(player))
             : null;
       } else {
          return null;
@@ -461,7 +460,7 @@ public final class InteractionClient {
    }
 
    @SubscribeEvent
-   public static void renderPlayer(net.neoforged.neoforge.client.event.RenderPlayerEvent.Pre event) {
+   public static void renderPlayer(net.minecraftforge.client.event.RenderPlayerEvent.Pre event) {
       if (!AvatarRenderer.render(event)) {
          Player player = event.getEntity();
          SessionState s = forPlayer(player.getUUID());
@@ -474,7 +473,7 @@ public final class InteractionClient {
    }
 
    @SubscribeEvent
-   public static void renderedPlayer(net.neoforged.neoforge.client.event.RenderPlayerEvent.Post event) {
+   public static void renderedPlayer(net.minecraftforge.client.event.RenderPlayerEvent.Post event) {
       Player player = event.getEntity();
       float[] previous = RENDER_FACING.remove(player.getUUID());
       if (previous != null) {
@@ -508,11 +507,11 @@ public final class InteractionClient {
    }
 
    @SubscribeEvent
-   public static void hud(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event) {
+   public static void hud(net.minecraftforge.client.event.RenderGuiEvent.Post event) {
       Minecraft mc = Minecraft.getInstance();
       if (mc.player != null && !mc.options.hideGui && mc.screen == null) {
          InteractionHud.render(event.getGuiGraphics());
-         SceneStaminaHud.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
+         SceneStaminaHud.render(event.getGuiGraphics(), event.getPartialTick());
       }
    }
 
@@ -522,10 +521,10 @@ public final class InteractionClient {
    }
 
    @SubscribeEvent
-   public static void crosshair(net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Pre event) {
+   public static void crosshair(net.minecraftforge.client.event.RenderGuiOverlayEvent.Pre event) {
       SessionState s = local();
       Minecraft mc = Minecraft.getInstance();
-      if (s != null && s.action == 4 && s.initiator().id.equals(mc.player.getUUID()) && event.getName().equals(VanillaGuiLayers.CROSSHAIR)) {
+      if (s != null && s.action == 4 && s.initiator().id.equals(mc.player.getUUID()) && event.getOverlay().equals(net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.CROSSHAIR.type())) {
          event.setCanceled(true);
       }
    }

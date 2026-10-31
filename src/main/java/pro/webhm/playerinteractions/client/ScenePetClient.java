@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.resources.PlayerSkin.Model;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
@@ -127,7 +126,7 @@ public final class ScenePetClient {
             double time = session.time(mc.level.getGameTime(), partial);
             Map pose = actor.rigPose(session.action, time, session.duration());
             return new ScenePetClient.TouchActor(
-               pose, actor.target(session.action, time), actor.heading(session.action, time), p.getSkin().model() == Model.SLIM
+               pose, actor.target(session.action, time), actor.heading(session.action, time), SkinCompat.slim(p)
             );
          } else {
             return null;
@@ -139,7 +138,7 @@ public final class ScenePetClient {
 
    public static BodyData body(AbstractClientPlayer player) {
       BodyData d = BODIES.computeIfAbsent(player.getUUID(), id -> Appearance.sceneRig());
-      d.slim = player.getSkin().model() == Model.SLIM;
+      d.slim = SkinCompat.slim(player);
       d.breast = AppearanceClient.get(player.getUUID());
       return d;
    }

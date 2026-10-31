@@ -4,7 +4,6 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
@@ -12,7 +11,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.StartTracking;
-import net.neoforged.neoforge.network.PacketDistributor;
 import pro.webhm.playerinteractions.anim.Clip;
 
 @Mod.EventBusSubscriber(
@@ -40,7 +38,7 @@ public final class AppearanceServer {
          try {
             Appearance.Settings b = Appearance.decode(json);
             player.getPersistentData().putString("aot_player_interactions_appearance", Clip.JSON.toJson(b));
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, packet(player), new CustomPacketPayload[0]);
+            Network.toTrackingAndSelf(player, packet(player));
          } catch (RuntimeException var5) {
          }
       }
@@ -55,17 +53,17 @@ public final class AppearanceServer {
    public static void login(PlayerLoggedInEvent e) {
       if (e.getEntity() instanceof ServerPlayer player) {
          for (ServerPlayer other : player.server.getPlayerList().getPlayers()) {
-            PacketDistributor.sendToPlayer(player, packet(other), new CustomPacketPayload[0]);
+            Network.toPlayer(player, packet(other));
          }
 
-         PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, packet(player), new CustomPacketPayload[0]);
+         Network.toTrackingAndSelf(player, packet(player));
       }
    }
 
    @SubscribeEvent
    public static void track(StartTracking e) {
       if (e.getEntity() instanceof ServerPlayer viewer && e.getTarget() instanceof ServerPlayer target) {
-         PacketDistributor.sendToPlayer(viewer, packet(target), new CustomPacketPayload[0]);
+         Network.toPlayer(viewer, packet(target));
       }
    }
 
@@ -81,7 +79,7 @@ public final class AppearanceServer {
    @SubscribeEvent
    public static void respawn(PlayerRespawnEvent e) {
       if (e.getEntity() instanceof ServerPlayer p) {
-         PacketDistributor.sendToPlayersTrackingEntityAndSelf(p, packet(p), new CustomPacketPayload[0]);
+         Network.toTrackingAndSelf(p, packet(p));
       }
    }
 

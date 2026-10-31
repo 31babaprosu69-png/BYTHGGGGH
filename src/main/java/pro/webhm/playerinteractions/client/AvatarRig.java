@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.resources.PlayerSkin.Model;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import org.joml.Matrix4f;
@@ -54,7 +53,7 @@ public final class AvatarRig extends SharedBodyModel<AbstractClientPlayer> {
    public void prepare(AbstractClientPlayer player, Map<String, BoneTransform> pose, float partial, boolean scene) {
       BodyData data = new BodyData();
       data.breast = AppearanceClient.get(player.getUUID());
-      data.slim = player.getSkin().model() == Model.SLIM;
+      data.slim = SkinCompat.slim(player);
       data.modelShape = scene ? SCENE.modelShape : new ModelShapeData();
       data.rootPivot = scene ? SCENE.rootPivot : "center";
       data.pivotX = SCENE.pivotX;

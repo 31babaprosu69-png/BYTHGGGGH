@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -19,7 +18,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.slf4j.Logger;
 import pro.webhm.playerinteractions.anim.AnimationBundle;
 import pro.webhm.playerinteractions.anim.AnimationFiles;
@@ -78,19 +76,18 @@ public final class AnimationCatalog {
    }
 
    public static void send(ServerPlayer player) {
-      PacketDistributor.sendToPlayer(
+      Network.toPlayer(
          player,
-         new Network.Update("catalog_begin", Clip.JSON.toJson(new AnimationCatalog.Header(generation, entries.size(), skipped, editable(player)))),
-         new CustomPacketPayload[0]
+         new Network.Update("catalog_begin", Clip.JSON.toJson(new AnimationCatalog.Header(generation, entries.size(), skipped, editable(player))))
       );
 
       for (AnimationBundle entry : entries) {
-         PacketDistributor.sendToPlayer(
-            player, new Network.CatalogData(generation, entry.action(), entry.json().getBytes(StandardCharsets.UTF_8)), new CustomPacketPayload[0]
+         Network.toPlayer(
+            player, new Network.CatalogData(generation, entry.action(), entry.json().getBytes(StandardCharsets.UTF_8))
          );
       }
 
-      PacketDistributor.sendToPlayer(player, new Network.Update("catalog_end", Integer.toString(generation)), new CustomPacketPayload[0]);
+      Network.toPlayer(player, new Network.Update("catalog_end", Integer.toString(generation)));
    }
 
    public static void request(ServerPlayer player, boolean reload) {

@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,13 +22,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.StartTracking;
 import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent.Post;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.event.TickEvent;
 import pro.webhm.playerinteractions.anim.BedSceneOrigin;
 import pro.webhm.playerinteractions.anim.Clip;
 
@@ -83,7 +81,7 @@ public final class InteractionServer {
 
    private static void send(ServerPlayer p, String kind, Object value) {
       if (p != null) {
-         PacketDistributor.sendToPlayer(p, new Network.Update(kind, Clip.JSON.toJson(value)), new CustomPacketPayload[0]);
+         Network.toPlayer(p, new Network.Update(kind, Clip.JSON.toJson(value)));
       }
    }
 
@@ -420,8 +418,14 @@ public final class InteractionServer {
    }
 
    @SubscribeEvent
-   public static void tick(Post event) {
-      MinecraftServer server = event.getServer();
+   public static void tick(TickEvent.ServerTickEvent event) {
+      if (event.phase != TickEvent.Phase.END) {
+         return;
+      }
+      MinecraftServer server = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer();
+      if (server == null) {
+         return;
+      }
       long tick = server.overworld().getGameTime();
 
       for (ConsentBook.Invite invite : CONSENT.invitations()) {
@@ -590,7 +594,7 @@ public final class InteractionServer {
    }
 
    @SubscribeEvent
-   public static void damage(LivingIncomingDamageEvent event) {
+   public static void damage(LivingHurtEvent event) {
       if (event.getEntity() instanceof ServerPlayer p) {
          remove(p);
       }
